@@ -37,6 +37,7 @@ COPY novnc-defaults.json /opt/noVNC/defaults.json
 
 RUN groupadd -g 1000 daim \
  && useradd -m -u 1000 -g 1000 -s /bin/bash daim \
+ && echo "daim:daim" | chpasswd \
  && echo "daim ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/daim \
  && chmod 0440 /etc/sudoers.d/daim \
  && install -d -o daim -g daim /opt/vnc
