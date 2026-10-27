@@ -1,6 +1,9 @@
 # Ubuntu 20.04 + ROS Noetic remote desktop, with every lab-0 dependency installed.
 # Students connect with TurboVNC Viewer or a browser (noVNC) and build the lab-0
 # workspace (catkin_ws) themselves.
+#
+# Published without a VNC password (docker-compose.yml adds it on each VM):
+#   docker build -t daimlab/noetic-desktop . && docker push daimlab/noetic-desktop
 FROM osrf/ros:noetic-desktop-full
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TURBOVNC_VERSION=3.3.1
@@ -60,10 +63,6 @@ RUN rosdep update --include-eol-distros \
 # The marker skips Ubuntu's sudo tip in new terminals. The tip calls `groups`,
 # which warns about the GPU device's host group that has no name in the container.
 RUN touch ~/.sudo_as_admin_successful
-
-# Last layer, so a password change rebuilds in seconds: docker compose up -d --build
-ARG VNC_PASSWORD
-RUN echo "$VNC_PASSWORD" | vncpasswd -f > /opt/vnc/passwd && chmod 600 /opt/vnc/passwd
 
 # Display :1 serves VNC on 5901 (TurboVNC Viewer over TCP, noVNC over WebSocket)
 # and the noVNC page on 5801 (reached through nginx).
