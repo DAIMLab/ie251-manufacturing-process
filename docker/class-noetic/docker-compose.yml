@@ -8,7 +8,7 @@ services:
         ARG VNC_PASSWORD
         RUN echo "$$VNC_PASSWORD" | vncpasswd -f > /opt/vnc/passwd && chmod 600 /opt/vnc/passwd
       args:
-        VNC_PASSWORD: ${VNC_PASSWORD:?Set VNC_PASSWORD in .env}
+        VNC_PASSWORD: ${VNC_PASSWORD:-daim}
     image: class-noetic # local only: this layer holds the password, never push it
     hostname: class-noetic
     restart: unless-stopped
