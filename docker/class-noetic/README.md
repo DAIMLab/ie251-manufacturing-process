@@ -1,13 +1,9 @@
 # Prerequisites
 
 - Ubuntu host with an NVIDIA GPU
-- NVIDIA driver with OpenGL/EGL (`nvidia-driver-<version>`). VirtualGL renders Gazebo and RViz
-  through these libraries, and `nvidia-headless-<version>` leaves them out. GPU cloud images
-  usually ship the full driver.
-- On a cloud, a **VM** instance. Container instances (Runpod Pods, vast.ai default instances)
-  already run inside Docker and cannot start Docker themselves.
-- Inbound ports 80 (browser) and 5901 (TurboVNC Viewer). On vast.ai, declare
-  `-p 80:80 -p 5901:5901` when creating the instance.
+- NVIDIA driver with the OpenGL/EGL libraries (`nvidia-driver-<version>`, not `nvidia-headless-<version>`)
+- **VM** instance on a cloud (container instances such as Runpod Pods cannot run Docker)
+- Inbound ports 80 (browser) and 5901 (TurboVNC Viewer), declared as `-p 80:80 -p 5901:5901` on vast.ai
 
 # Quick Start
 
