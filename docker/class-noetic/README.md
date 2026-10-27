@@ -1,9 +1,39 @@
+# Prerequisites
+
+- Ubuntu host with an NVIDIA GPU
+- NVIDIA driver with OpenGL/EGL (`nvidia-driver-<version>`). VirtualGL renders Gazebo and RViz
+  through these libraries, and `nvidia-headless-<version>` leaves them out. GPU cloud images
+  usually ship the full driver.
+- On a cloud, a **VM** instance. Container instances (Runpod Pods, vast.ai default instances)
+  already run inside Docker and cannot start Docker themselves.
+- Inbound ports 80 (browser) and 5901 (TurboVNC Viewer). On vast.ai, declare
+  `-p 80:80 -p 5901:5901` when creating the instance.
+
 # Quick Start
 
-## NVIDIA Toolkit
+## Docker
 
-Needs the NVIDIA driver (`nvidia-smi` works) and Docker on the host. Use a full driver, not the
-`nvidia-headless` variant: VirtualGL needs the driver's OpenGL/EGL libraries.
+```bash
+# Repository
+sudo apt-get update && sudo apt-get install -y ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+# Install Docker Engine with the compose plugin
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+## NVIDIA Toolkit
 
 ```bash
 # Repository
@@ -17,7 +47,4 @@ curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-contai
 sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit
 sudo nvidia-ctk runtime configure --runtime=docker
 sudo systemctl restart docker
-
-# Check: prints the GPU table from inside a container
-sudo docker run --rm --gpus all ubuntu nvidia-smi
 ```
