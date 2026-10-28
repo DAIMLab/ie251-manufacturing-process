@@ -3,7 +3,7 @@
 - Ubuntu host with an GPU
 - NVIDIA Container Toolkit for NVIDIA GPUs
 - **VM** instance on a cloud (container instances such as Runpod Pods cannot run Docker)
-- Inbound port 5901 (VNC)
+- Inbound ports 5901 to 5903 (one VNC port per desktop)
 - [RealVNC Viewer](https://www.realvnc.com/en/connect/download/viewer/) on your PC
 
 # Must Install
@@ -55,6 +55,8 @@ some cloud services like [vast.ai](http://vast.ai) maps the inbound port to the
 root@ubuntu:~# env | grep PORT
 VAST_TCP_PORT_22=40028
 VAST_TCP_PORT_5901=40023
+VAST_TCP_PORT_5902=40024
+VAST_TCP_PORT_5903=40025
 VAST_UDP_PORT_741641=40016
 ```
 
@@ -65,11 +67,25 @@ VAST_UDP_PORT_741641=40016
 ```
 # 1. Clone this repository
 git clone https://github.com/DAIMLab/ie251-manufacturing-process.git
-cd ie251-manufacturing-process/docker/noetic-group-wise
+cd ie251-manufacturing-process/docker/noetic-desktop
 
-# 2. Launch docker
+# 2. Launch the desktops (desktop1 to desktop3)
 docker compose up -d
 
 # 3. Connect with RealVNC Viewer (password: daim), and accept the unencrypted-connection warning
 <instance IP>::<port>
 ```
+
+# Desktops
+
+| Desktop | Port | Home volume |
+|---|---|---|
+| desktop1 | 5901 | home1 |
+| desktop2 | 5902 | home2 |
+| desktop3 | 5903 | home3 |
+
+Give each student one desktop's port. Each home volume keeps that student's files across restarts.
+
+- **Count**: add or remove a `desktopN` block in `docker-compose.yml` (and its `homeN` volume), then run `docker compose up -d`.
+- **Shared desktop**: keep only `desktop1` and give everyone port 5901.
+- **Load check**: with every student running Gazebo, watch `nvidia-smi` and `docker stats`.

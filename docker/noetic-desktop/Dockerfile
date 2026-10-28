@@ -2,7 +2,8 @@
 # Students connect with a VNC client (RealVNC Viewer recommended) and build the
 # lab-0 workspace (catkin_ws) themselves.
 #
-# Published without a VNC password (docker-compose.yml adds it on each VM):
+# The VNC password comes from VNC_PASSWORD on every start, so each VM sets its own
+# without rebuilding. Publish with:
 #   docker build -t daimlab/noetic-desktop . && docker push daimlab/noetic-desktop
 FROM osrf/ros:noetic-desktop-full
 ARG DEBIAN_FRONTEND=noninteractive
@@ -44,7 +45,8 @@ RUN groupadd -g 1000 daim \
 ENV NVIDIA_DRIVER_CAPABILITIES=all \
     DISABLE_ROS1_EOL_WARNINGS=1 \
     VGL_DISPLAY=egl \
-    PATH=/opt/TurboVNC/bin:/opt/VirtualGL/bin:${PATH}
+    PATH=/opt/TurboVNC/bin:/opt/VirtualGL/bin:${PATH} \
+    VNC_PASSWORD=daim
 
 USER daim
 WORKDIR /home/daim
@@ -63,5 +65,7 @@ RUN touch ~/.sudo_as_admin_successful
 # TurboVNC and TigerVNC viewers take TLSVnc (encrypted); RealVNC Viewer
 # has no TLSVnc and falls back to VNC (unencrypted).
 EXPOSE 5901
+# Writes VNC_PASSWORD into the password file on every start, then runs CMD
+ENTRYPOINT ["sh", "-c", "umask 077 && echo \"$VNC_PASSWORD\" | vncpasswd -f > /opt/vnc/passwd && exec \"$@\"", "sh"]
 CMD ["vncserver", ":1", "-fg", "-wm", "xfce", "-vgl", \
      "-securitytypes", "TLSVnc,VNC", "-rfbauth", "/opt/vnc/passwd"]
