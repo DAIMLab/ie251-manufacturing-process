@@ -1,6 +1,6 @@
 # Ubuntu 20.04 + ROS Noetic remote desktop, with every lab-0 dependency installed.
-# Students connect with TurboVNC Viewer or a browser (noVNC) and build the lab-0
-# workspace (catkin_ws) themselves.
+# Students connect with a VNC client (TurboVNC Viewer recommended) and build the
+# lab-0 workspace (catkin_ws) themselves.
 #
 # Published without a VNC password (docker-compose.yml adds it on each VM):
 #   docker build -t daimlab/noetic-desktop . && docker push daimlab/noetic-desktop
@@ -8,9 +8,8 @@ FROM osrf/ros:noetic-desktop-full
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TURBOVNC_VERSION=3.3.1
 ARG VIRTUALGL_VERSION=3.1.5
-ARG NOVNC_VERSION=1.7.0
 
-# Remote desktop: XFCE, TurboVNC (VNC server + noVNC web server), VirtualGL (GPU OpenGL)
+# Remote desktop: XFCE, TurboVNC (VNC server), VirtualGL (GPU OpenGL)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         sudo git curl ca-certificates \
         xfce4 xfce4-terminal dbus-x11 \
@@ -32,11 +31,6 @@ RUN apt-get update && apt-get install -y \
         ros-noetic-position-controllers ros-noetic-ros-controllers ros-noetic-ros-control \
         ros-noetic-joint-state-publisher-gui ros-noetic-joint-state-publisher \
  && rm -rf /var/lib/apt/lists/*
-
-# noVNC browser client, served by TurboVNC's web server behind nginx.
-# defaults.json is noVNC's own settings file.
-ADD https://github.com/novnc/noVNC.git#v${NOVNC_VERSION} /opt/noVNC
-COPY novnc-defaults.json /opt/noVNC/defaults.json
 
 RUN groupadd -g 1000 daim \
  && useradd -m -u 1000 -g 1000 -s /bin/bash daim \
@@ -64,11 +58,10 @@ RUN rosdep update --include-eol-distros \
 # which warns about the GPU device's host group that has no name in the container.
 RUN touch ~/.sudo_as_admin_successful
 
-# Display :1 serves VNC on 5901 (TurboVNC Viewer over TCP, noVNC over WebSocket)
-# and the noVNC page on 5801 (reached through nginx).
+# Display :1 serves VNC on 5901.
 # -vgl runs the desktop under vglrun, so every OpenGL app renders on the GPU.
 # TurboVNC Viewer follows the server's order and takes TLSVnc (encrypted);
-# noVNC cannot do TLS and falls back to VNC.
-EXPOSE 5801 5901
-CMD ["vncserver", ":1", "-fg", "-wm", "xfce", "-vgl", "-novnc", "/opt/noVNC", \
+# clients without TLS support fall back to VNC.
+EXPOSE 5901
+CMD ["vncserver", ":1", "-fg", "-wm", "xfce", "-vgl", \
      "-securitytypes", "TLSVnc,VNC", "-rfbauth", "/opt/vnc/passwd"]

@@ -1,11 +1,12 @@
 # Prerequisites
 
-- Ubuntu host with an NVIDIA GPU
-- NVIDIA driver with the OpenGL/EGL libraries (`nvidia-driver-<version>`, not `nvidia-headless-<version>`)
+- Ubuntu host with an GPU
+- NVIDIA Container Toolkit for NVIDIA GPUs
 - **VM** instance on a cloud (container instances such as Runpod Pods cannot run Docker)
-- Inbound ports 80 (browser) and 5901 (TurboVNC Viewer), declared as `-p 80:80 -p 5901:5901` on vast.ai
+- Inbound port 5901 (VNC)
+- VNC client on your PC ([TurboVNC Viewer](https://github.com/TurboVNC/turbovnc/releases) recommended)
 
-# Quick Start
+# Must Install
 
 ## Docker
 
@@ -43,4 +44,32 @@ curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-contai
 sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit
 sudo nvidia-ctk runtime configure --runtime=docker
 sudo systemctl restart docker
+```
+
+## Port Mapping
+
+some cloud services like [vast.ai](http://vast.ai) maps the inbound port to the random available port of the public IP.
+
+```
+# For vast.ai, look up env variables
+root@ubuntu:~# env | grep PORT
+VAST_TCP_PORT_22=40028
+VAST_TCP_PORT_5901=40023
+VAST_UDP_PORT_741641=40016
+```
+
+
+
+# Quick Start
+
+```
+# 1. Clone this repository
+git clone https://github.com/DAIMLab/ie251-manufacturing-process.git
+cd ie251-manufacturing-process/docker/class-noetic
+
+# 2. Launch docker
+docker compose up -d
+
+# 3. Connect with a VNC client (password: daim)
+<instance IP>::<port>
 ```

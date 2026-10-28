@@ -16,7 +16,7 @@ services:
     tmpfs:
       - /tmp # fresh on every start, so the previous X server's lock never blocks a restart
     ports:
-      - "5901:5901" # TurboVNC Viewer: <vm-ip>:1
+      - "5901:5901" # VNC client: <vm-ip>:1
     volumes:
       - home:/home/daim
     deploy:
@@ -26,16 +26,6 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-
-  nginx:
-    image: nginx:1.31-alpine
-    restart: unless-stopped
-    ports:
-      - "80:80" # browser: http://<vm-ip>/
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    depends_on:
-      - desktop
 
 volumes:
   home:
