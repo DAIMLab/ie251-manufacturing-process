@@ -65,7 +65,7 @@ VAST_UDP_PORT_741641=40016
 ```
 # 1. Clone this repository
 git clone https://github.com/DAIMLab/ie251-manufacturing-process.git
-cd ie251-manufacturing-process/docker/class-noetic
+cd ie251-manufacturing-process/docker/noetic-group-wise
 
 # 2. Launch docker
 docker compose up -d

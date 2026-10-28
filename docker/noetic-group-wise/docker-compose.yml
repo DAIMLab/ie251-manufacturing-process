@@ -9,8 +9,8 @@ services:
         RUN echo "$$VNC_PASSWORD" | vncpasswd -f > /opt/vnc/passwd && chmod 600 /opt/vnc/passwd
       args:
         VNC_PASSWORD: ${VNC_PASSWORD:-daim}
-    image: class-noetic # local only: this layer holds the password, never push it
-    hostname: class-noetic
+    image: noetic-group-wise # local only: this layer holds the password, never push it
+    hostname: noetic-group-wise
     restart: unless-stopped
     init: true
     tmpfs:
