@@ -1,0 +1,47 @@
+# One remote desktop per desktopN service, each with its own port and home.
+# Add or remove a desktopN block to change the count; keep desktop-base and desktop1 for one shared desktop.
+services:
+  desktop-base:
+    profiles: [template] # common settings only; excluded from normal `docker compose up`
+    image: daimlab/noetic-desktop
+    env_file: [{path: .env, required: false}] # without .env, the image's default password applies
+    restart: unless-stopped
+    init: true
+    tmpfs:
+      - /tmp # fresh on every start, so the previous X server's lock never blocks a restart
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  desktop1:
+    extends:
+      service: desktop-base
+    profiles: !reset [] # clear the inherited template profile so this desktop starts by default
+    hostname: desktop1
+    ports: ["5901:5901"] # VNC client: <vm-ip>::5901
+    volumes: [home1:/home/daim]
+
+  desktop2:
+    extends:
+      service: desktop-base
+    profiles: !reset []
+    hostname: desktop2
+    ports: ["5902:5901"]
+    volumes: [home2:/home/daim]
+
+  desktop3:
+    extends:
+      service: desktop-base
+    profiles: !reset []
+    hostname: desktop3
+    ports: ["5903:5901"]
+    volumes: [home3:/home/daim]
+
+volumes:
+  home1:
+  home2:
+  home3:
