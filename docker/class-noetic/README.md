@@ -4,7 +4,7 @@
 - NVIDIA Container Toolkit for NVIDIA GPUs
 - **VM** instance on a cloud (container instances such as Runpod Pods cannot run Docker)
 - Inbound port 5901 (VNC)
-- VNC client on your PC ([TurboVNC Viewer](https://github.com/TurboVNC/turbovnc/releases) recommended)
+- [RealVNC Viewer](https://www.realvnc.com/en/connect/download/viewer/) on your PC
 
 # Must Install
 
@@ -70,6 +70,6 @@ cd ie251-manufacturing-process/docker/class-noetic
 # 2. Launch docker
 docker compose up -d
 
-# 3. Connect with a VNC client (password: daim)
+# 3. Connect with RealVNC Viewer (password: daim), and accept the unencrypted-connection warning
 <instance IP>::<port>
 ```

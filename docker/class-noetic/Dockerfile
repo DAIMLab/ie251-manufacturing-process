@@ -1,5 +1,5 @@
 # Ubuntu 20.04 + ROS Noetic remote desktop, with every lab-0 dependency installed.
-# Students connect with a VNC client (TurboVNC Viewer recommended) and build the
+# Students connect with a VNC client (RealVNC Viewer recommended) and build the
 # lab-0 workspace (catkin_ws) themselves.
 #
 # Published without a VNC password (docker-compose.yml adds it on each VM):
@@ -60,8 +60,8 @@ RUN touch ~/.sudo_as_admin_successful
 
 # Display :1 serves VNC on 5901.
 # -vgl runs the desktop under vglrun, so every OpenGL app renders on the GPU.
-# TurboVNC Viewer follows the server's order and takes TLSVnc (encrypted);
-# clients without TLS support fall back to VNC.
+# TurboVNC and TigerVNC viewers take TLSVnc (encrypted); RealVNC Viewer
+# has no TLSVnc and falls back to VNC (unencrypted).
 EXPOSE 5901
 CMD ["vncserver", ":1", "-fg", "-wm", "xfce", "-vgl", \
      "-securitytypes", "TLSVnc,VNC", "-rfbauth", "/opt/vnc/passwd"]
